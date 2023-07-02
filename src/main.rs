@@ -31,6 +31,15 @@ fn main() -> std::io::Result<()> {
             println!("Component {} created.", pascal_name);
         },
 
+        TemplateType::Entity => {
+            let name = &args[2];
+            let pascal_name = to_pascal_case(name);
+
+            creat_entity_file(name, &pascal_name)?;
+
+            println!("Entity template not implemented yet.");
+        },
+
         TemplateType::Unknown => {
             println!("Unknown template: {}", args[1]);
             return Ok(());
@@ -52,6 +61,14 @@ fn create_index_file(name: &String) -> Result<(), Error> {
     let template = include_str!("./templates/index_template.ts")
         .replace("{component}", name);
     let mut file = File::create(format!("{}/index.ts", name))?;
+    write!(file, "{}", template)?;
+    Ok(())
+}
+
+fn creat_entity_file(name: &String, pascal_name: &String) -> Result<(), Error> {
+    let template = include_str!("./templates/entity/entity_template.ts")
+        .replace("{entity}", &pascal_name);
+    let mut file = File::create(format!("./{}.entity.ts", name))?;
     write!(file, "{}", template)?;
     Ok(())
 }
