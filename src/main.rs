@@ -37,7 +37,16 @@ fn main() -> std::io::Result<()> {
 
             create_entity_file(name, &pascal_name)?;
 
-            println!("Entity template not implemented yet.");
+            println!("Entity {} created.", pascal_name);
+        },
+
+        TemplateType::Model => {
+            let name = &args[2];
+            let pascal_name = to_pascal_case(name);
+
+            create_model_file(name, &pascal_name)?;
+
+            println!("Model {} created.", pascal_name);
         },
 
         TemplateType::Unknown => {
@@ -69,6 +78,14 @@ fn create_entity_file(name: &String, pascal_name: &String) -> Result<(), Error> 
     let template = include_str!("./templates/entity/entity_template.ts")
         .replace("{entity}", &pascal_name);
     let mut file = File::create(format!("./{}.entity.ts", name))?;
+    write!(file, "{}", template)?;
+    Ok(())
+}
+
+fn create_model_file(name: &String, pascal_name: &String) -> Result<(), Error> {
+    let template = include_str!("./templates/model/model_template.ts")
+        .replace("{model}", &pascal_name);
+    let mut file = File::create(format!("./{}.model.ts", name))?;
     write!(file, "{}", template)?;
     Ok(())
 }
