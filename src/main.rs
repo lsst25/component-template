@@ -2,6 +2,20 @@ use std::env;
 use std::fs::{self, File};
 use std::io::prelude::*;
 
+enum TemplateType {
+    Component,
+    Unknown,
+}
+
+impl From<&str> for TemplateType {
+    fn from(item: &str) -> Self {
+        match item {
+            "component" | "c" => TemplateType::Component,
+            _ => TemplateType::Unknown,
+        }
+    }
+}
+
 fn to_pascal_case(name: &str) -> String {
     name.split('-')
         .map(|s| {
@@ -21,28 +35,33 @@ fn main() -> std::io::Result<()> {
         return Ok(());
     }
 
-    let template_type = &args[1];
-    if template_type != "component" && template_type != "c" {
-        println!("Unknown template: {}", template_type);
-        return Ok(());
+    let template_type = TemplateType::from(args[1].as_str());
+
+    match template_type {
+        TemplateType::Component => {
+            let name = &args[2];
+            let pascal_name = to_pascal_case(name);
+
+            fs::create_dir_all(name)?;
+
+            let template = include_str!("./templates/index_template.ts")
+                .replace("{component}", name);
+            let mut file = File::create(format!("{}/index.ts", name))?;
+            write!(file, "{}", template)?;
+
+            let template = include_str!("./templates/component_template.tsx")
+                .replace("{component}", &pascal_name);
+            let mut file = File::create(format!("{}/{}.component.tsx", name, name))?;
+            write!(file, "{}", template)?;
+
+            println!("Component {} created.", pascal_name);
+        },
+
+        TemplateType::Unknown => {
+            println!("Unknown template: {}", args[1]);
+            return Ok(());
+        }
     }
-
-    let name = &args[2];
-    let pascal_name = to_pascal_case(name);
-
-    fs::create_dir_all(name)?;
-
-    let template = include_str!("./templates/index_template.ts")
-        .replace("{component}", name);
-    let mut file = File::create(format!("{}/index.ts", name))?;
-    write!(file, "{}", template)?;
-
-    let template = include_str!("./templates/component_template.tsx")
-        .replace("{component}", &pascal_name);
-    let mut file = File::create(format!("{}/{}.component.tsx", name, name))?;
-    write!(file, "{}", template)?;
-
-    println!("{} {} created.", template_type, pascal_name);
 
     Ok(())
 }
