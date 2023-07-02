@@ -3,6 +3,7 @@ mod utils;
 
 use std::env;
 use std::fs::{self, File};
+use std::io::Error;
 use std::io::prelude::*;
 
 use template_type::TemplateType;
@@ -24,15 +25,8 @@ fn main() -> std::io::Result<()> {
 
             fs::create_dir_all(name)?;
 
-            let template = include_str!("./templates/index_template.ts")
-                .replace("{component}", name);
-            let mut file = File::create(format!("{}/index.ts", name))?;
-            write!(file, "{}", template)?;
-
-            let template = include_str!("./templates/component_template.tsx")
-                .replace("{component}", &pascal_name);
-            let mut file = File::create(format!("{}/{}.component.tsx", name, name))?;
-            write!(file, "{}", template)?;
+            create_index_file(name)?;
+            create_component_file(name, &pascal_name)?;
 
             println!("Component {} created.", pascal_name);
         },
@@ -43,5 +37,21 @@ fn main() -> std::io::Result<()> {
         }
     }
 
+    Ok(())
+}
+
+fn create_component_file(name: &String, pascal_name: &String) -> Result<(), Error> {
+    let template = include_str!("./templates/component_template.tsx")
+        .replace("{component}", &pascal_name);
+    let mut file = File::create(format!("{}/{}.component.tsx", name, name))?;
+    write!(file, "{}", template)?;
+    Ok(())
+}
+
+fn create_index_file(name: &String) -> Result<(), Error> {
+    let template = include_str!("./templates/index_template.ts")
+        .replace("{component}", name);
+    let mut file = File::create(format!("{}/index.ts", name))?;
+    write!(file, "{}", template)?;
     Ok(())
 }
