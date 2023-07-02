@@ -1,22 +1,12 @@
 mod template_type;
+mod utils;
 
 use std::env;
 use std::fs::{self, File};
 use std::io::prelude::*;
 
 use template_type::TemplateType;
-
-fn to_pascal_case(name: &str) -> String {
-    name.split('-')
-        .map(|s| {
-            let mut c = s.chars();
-            match c.next() {
-                None => String::new(),
-                Some(f) => f.to_uppercase().collect::<String>() + c.as_str(),
-            }
-        })
-        .collect::<String>()
-}
+use utils::to_pascal_case;
 
 fn main() -> std::io::Result<()> {
     let args: Vec<String> = env::args().collect();
