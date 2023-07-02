@@ -26,12 +26,12 @@ fn main() -> std::io::Result<()> {
 
     fs::create_dir_all(component_name)?;
 
-    let template = fs::read_to_string("./templates/index_template.ts")?
+    let template = include_str!("./templates/index_template.ts")
         .replace("{component}", component_name);
     let mut file = File::create(format!("{}/index.ts", component_name))?;
     write!(file, "{}", template)?;
 
-    let template = fs::read_to_string("./templates/component_template.tsx")?
+    let template = include_str!("./templates/component_template.tsx")
         .replace("{component}", &pascal_component_name);
     let mut file = File::create(format!("{}/{}.component.tsx", component_name, component_name))?;
     write!(file, "{}", template)?;
