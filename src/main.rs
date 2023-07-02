@@ -42,7 +42,7 @@ fn main() -> std::io::Result<()> {
     let mut file = File::create(format!("{}/{}.component.tsx", name, name))?;
     write!(file, "{}", template)?;
 
-    println!("{} {} created.", command, pascal_name);
+    println!("{} {} created.", template_type, pascal_name);
 
     Ok(())
 }
