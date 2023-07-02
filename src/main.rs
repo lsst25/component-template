@@ -16,27 +16,33 @@ fn to_pascal_case(name: &str) -> String {
 
 fn main() -> std::io::Result<()> {
     let args: Vec<String> = env::args().collect();
-    if args.len() < 2 {
-        println!("Please provide a component name.");
+    if args.len() < 3 {
+        println!("Please provide a template and a name.");
         return Ok(());
     }
 
-    let component_name = &args[1];
-    let pascal_component_name = to_pascal_case(component_name);
+    let template_type = &args[1];
+    if template_type != "component" && template_type != "c" {
+        println!("Unknown template: {}", template_type);
+        return Ok(());
+    }
 
-    fs::create_dir_all(component_name)?;
+    let name = &args[2];
+    let pascal_name = to_pascal_case(name);
+
+    fs::create_dir_all(name)?;
 
     let template = include_str!("./templates/index_template.ts")
-        .replace("{component}", component_name);
-    let mut file = File::create(format!("{}/index.ts", component_name))?;
+        .replace("{component}", name);
+    let mut file = File::create(format!("{}/index.ts", name))?;
     write!(file, "{}", template)?;
 
     let template = include_str!("./templates/component_template.tsx")
-        .replace("{component}", &pascal_component_name);
-    let mut file = File::create(format!("{}/{}.component.tsx", component_name, component_name))?;
+        .replace("{component}", &pascal_name);
+    let mut file = File::create(format!("{}/{}.component.tsx", name, name))?;
     write!(file, "{}", template)?;
 
-    println!("Component {} created.", pascal_component_name);
+    println!("{} {} created.", command, pascal_name);
 
     Ok(())
 }
