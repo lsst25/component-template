@@ -84,7 +84,8 @@ fn create_entity_file(name: &String, pascal_name: &String) -> Result<(), Error> 
 
 fn create_model_file(name: &String, pascal_name: &String) -> Result<(), Error> {
     let template = include_str!("./templates/model/model_template.ts")
-        .replace("{model}", &pascal_name);
+        .replace("{model}", &pascal_name)
+        .replace("{model-name}", &name);
     let mut file = File::create(format!("./{}.model.ts", name))?;
     write!(file, "{}", template)?;
     Ok(())

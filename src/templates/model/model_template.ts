@@ -1,4 +1,4 @@
-import { {model}Entity } from '../entities/{model}.entity';
+import { {model}Entity } from '../entities/{model-name}.entity';
 
 export class {model}Model implements {model}Entity {
     public static create(): {model}Model {
