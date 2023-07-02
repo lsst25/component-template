@@ -1,20 +1,10 @@
+mod template_type;
+
 use std::env;
 use std::fs::{self, File};
 use std::io::prelude::*;
 
-enum TemplateType {
-    Component,
-    Unknown,
-}
-
-impl From<&str> for TemplateType {
-    fn from(item: &str) -> Self {
-        match item {
-            "component" | "c" => TemplateType::Component,
-            _ => TemplateType::Unknown,
-        }
-    }
-}
+use template_type::TemplateType;
 
 fn to_pascal_case(name: &str) -> String {
     name.split('-')
