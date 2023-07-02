@@ -35,7 +35,7 @@ fn main() -> std::io::Result<()> {
             let name = &args[2];
             let pascal_name = to_pascal_case(name);
 
-            creat_entity_file(name, &pascal_name)?;
+            create_entity_file(name, &pascal_name)?;
 
             println!("Entity template not implemented yet.");
         },
@@ -65,7 +65,7 @@ fn create_index_file(name: &String) -> Result<(), Error> {
     Ok(())
 }
 
-fn creat_entity_file(name: &String, pascal_name: &String) -> Result<(), Error> {
+fn create_entity_file(name: &String, pascal_name: &String) -> Result<(), Error> {
     let template = include_str!("./templates/entity/entity_template.ts")
         .replace("{entity}", &pascal_name);
     let mut file = File::create(format!("./{}.entity.ts", name))?;
