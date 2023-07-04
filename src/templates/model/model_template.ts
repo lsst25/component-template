@@ -1,8 +1,8 @@
-import { {model}Entity } from '../entities/{model-name}.entity';
+import { {pascal-name}Entity } from '../entities/{name}.entity';
 
-export class {model}Model implements {model}Entity {
-    public static create(): {model}Model {
-        return new {model}Model();
+export class {pascal-name}Model implements {pascal-name}Entity {
+    public static create(): {pascal-name}Model {
+        return new {pascal-name}Model();
     }
 
     private constructor() {

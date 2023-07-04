@@ -27,6 +27,7 @@ fn main() -> std::io::Result<()> {
 
             create_index_file(name)?;
             create_component_file(name, &pascal_name)?;
+            create_stories_file(name, &pascal_name)?;
 
             println!("Component {} created.", pascal_name);
         },
@@ -59,34 +60,53 @@ fn main() -> std::io::Result<()> {
 }
 
 fn create_component_file(name: &String, pascal_name: &String) -> Result<(), Error> {
-    let template = include_str!("./templates/component_template.tsx")
+    let template = include_str!("./templates/component/component_template.tsx")
         .replace("{component}", &pascal_name);
+
     let mut file = File::create(format!("{}/{}.component.tsx", name, name))?;
     write!(file, "{}", template)?;
+
     Ok(())
 }
 
 fn create_index_file(name: &String) -> Result<(), Error> {
-    let template = include_str!("./templates/index_template.ts")
+    let template = include_str!("./templates/component/index_template.ts")
         .replace("{component}", name);
+
     let mut file = File::create(format!("{}/index.ts", name))?;
     write!(file, "{}", template)?;
+
     Ok(())
 }
 
 fn create_entity_file(name: &String, pascal_name: &String) -> Result<(), Error> {
     let template = include_str!("./templates/entity/entity_template.ts")
-        .replace("{entity}", &pascal_name);
+        .replace("{pascal-name}", &pascal_name);
+
     let mut file = File::create(format!("./{}.entity.ts", name))?;
     write!(file, "{}", template)?;
+
     Ok(())
 }
 
 fn create_model_file(name: &String, pascal_name: &String) -> Result<(), Error> {
     let template = include_str!("./templates/model/model_template.ts")
-        .replace("{model}", &pascal_name)
-        .replace("{model-name}", &name);
+        .replace("{pascal-name}", &pascal_name)
+        .replace("{name}", &name);
+
     let mut file = File::create(format!("./{}.model.ts", name))?;
     write!(file, "{}", template)?;
+
+    Ok(())
+}
+
+fn create_stories_file(name: &String, pascal_name: &String) -> Result<(), Error> {
+    let template = include_str!("./templates/component/stories_template.tsx")
+        .replace("{pascal-name}", &pascal_name)
+        .replace("{name}", &name);
+
+    let mut file = File::create(format!("{}/{}.stories.tsx", name, name))?;
+    write!(file, "{}", template)?;
+
     Ok(())
 }
