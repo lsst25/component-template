@@ -17,12 +17,13 @@ fn main() -> std::io::Result<()> {
         return Ok(());
     }
 
+    let name = &args[2];
+    let pascal_name = to_pascal_case(name);
+
     let template_type = TemplateType::from(args[1].as_str());
 
     match template_type {
         TemplateType::Component => {
-            let name = &args[2];
-            let pascal_name = to_pascal_case(name);
             let path = if Path::new("./ui").exists() { "./ui" } else { "." };
 
             if Path::exists(Path::new(format!("{}/{}", path, name).as_str())) {
@@ -40,8 +41,6 @@ fn main() -> std::io::Result<()> {
         },
 
         TemplateType::Entity => {
-            let name = &args[2];
-            let pascal_name = to_pascal_case(name);
             let path = if Path::new("./entities").exists() { "./entities" } else { "." };
 
             if Path::exists(Path::new(format!("{}/{}.entity.ts", path, name).as_str())) {
@@ -55,8 +54,6 @@ fn main() -> std::io::Result<()> {
         },
 
         TemplateType::Model => {
-            let name = &args[2];
-            let pascal_name = to_pascal_case(name);
             let path = if Path::new("./models").exists() { "./models" } else { "." };
 
             if Path::exists(Path::new(format!("{}/{}.model.ts", path, name).as_str())) {
