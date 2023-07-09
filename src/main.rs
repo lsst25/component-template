@@ -5,6 +5,7 @@ use std::env;
 use std::fs::{self, File};
 use std::io::Error;
 use std::io::prelude::*;
+use std::path::Path;
 
 use template_type::TemplateType;
 use utils::to_pascal_case;
@@ -22,12 +23,22 @@ fn main() -> std::io::Result<()> {
         TemplateType::Component => {
             let name = &args[2];
             let pascal_name = to_pascal_case(name);
+            let component_exists =
+                Path::exists(Path::new(format!("{}/{}.component.tsx", name, name).as_str())) ||
+                Path::exists(Path::new(format!("./ui/{}/{}.component.tsx", name, name).as_str()));
 
-            fs::create_dir_all(name)?;
+            if component_exists {
+                println!("Component {} already exists.", pascal_name);
+                return Ok(());
+            }
 
-            create_index_file(name)?;
-            create_component_file(name, &pascal_name)?;
-            create_stories_file(name, &pascal_name)?;
+            let path = if Path::new("./ui").exists() { "./ui" } else { "." };
+
+            fs::create_dir(format!("{}/{}", path, name))?;
+
+            create_index_file(path, name)?;
+            create_component_file(path, name, &pascal_name)?;
+            create_stories_file(path, name, &pascal_name)?;
 
             println!("Component {} created.", pascal_name);
         },
@@ -59,21 +70,21 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 
-fn create_component_file(name: &String, pascal_name: &String) -> Result<(), Error> {
+fn create_component_file(path: &str, name: &String, pascal_name: &String) -> Result<(), Error> {
     let template = include_str!("./templates/component/component_template.tsx")
         .replace("{component}", &pascal_name);
 
-    let mut file = File::create(format!("{}/{}.component.tsx", name, name))?;
+    let mut file = File::create(format!("{}/{}/{}.component.tsx", path, name, name))?;
     write!(file, "{}", template)?;
 
     Ok(())
 }
 
-fn create_index_file(name: &String) -> Result<(), Error> {
+fn create_index_file(path: &str, name: &String) -> Result<(), Error> {
     let template = include_str!("./templates/component/index_template.ts")
         .replace("{component}", name);
 
-    let mut file = File::create(format!("{}/index.ts", name))?;
+    let mut file = File::create(format!("{}/{}/index.ts", path, name))?;
     write!(file, "{}", template)?;
 
     Ok(())
@@ -100,12 +111,12 @@ fn create_model_file(name: &String, pascal_name: &String) -> Result<(), Error> {
     Ok(())
 }
 
-fn create_stories_file(name: &String, pascal_name: &String) -> Result<(), Error> {
+fn create_stories_file(path: &str, name: &String, pascal_name: &String) -> Result<(), Error> {
     let template = include_str!("./templates/component/stories_template.tsx")
         .replace("{pascal-name}", &pascal_name)
         .replace("{name}", &name);
 
-    let mut file = File::create(format!("{}/{}.stories.tsx", name, name))?;
+    let mut file = File::create(format!("{}/{}/{}.stories.tsx", path, name, name))?;
     write!(file, "{}", template)?;
 
     Ok(())
