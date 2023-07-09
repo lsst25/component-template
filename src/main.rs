@@ -23,16 +23,12 @@ fn main() -> std::io::Result<()> {
         TemplateType::Component => {
             let name = &args[2];
             let pascal_name = to_pascal_case(name);
-            let component_exists =
-                Path::exists(Path::new(format!("{}/{}.component.tsx", name, name).as_str())) ||
-                Path::exists(Path::new(format!("./ui/{}/{}.component.tsx", name, name).as_str()));
+            let path = if Path::new("./ui").exists() { "./ui" } else { "." };
 
-            if component_exists {
+            if Path::exists(Path::new(format!("{}/{}", path, name).as_str())) {
                 println!("Component {} already exists.", pascal_name);
                 return Ok(());
             }
-
-            let path = if Path::new("./ui").exists() { "./ui" } else { "." };
 
             fs::create_dir(format!("{}/{}", path, name))?;
 
@@ -46,8 +42,14 @@ fn main() -> std::io::Result<()> {
         TemplateType::Entity => {
             let name = &args[2];
             let pascal_name = to_pascal_case(name);
+            let path = if Path::new("./entities").exists() { "./entities" } else { "." };
 
-            create_entity_file(name, &pascal_name)?;
+            if Path::exists(Path::new(format!("{}/{}.entity.ts", path, name).as_str())) {
+                println!("Entity {} already exists.", pascal_name);
+                return Ok(());
+            }
+
+            create_entity_file(path, name, &pascal_name)?;
 
             println!("Entity {} created.", pascal_name);
         },
@@ -55,8 +57,14 @@ fn main() -> std::io::Result<()> {
         TemplateType::Model => {
             let name = &args[2];
             let pascal_name = to_pascal_case(name);
+            let path = if Path::new("./models").exists() { "./models" } else { "." };
 
-            create_model_file(name, &pascal_name)?;
+            if Path::exists(Path::new(format!("{}/{}.model.ts", path, name).as_str())) {
+                println!("Model {} already exists.", pascal_name);
+                return Ok(());
+            }
+
+            create_model_file(path, name, &pascal_name)?;
 
             println!("Model {} created.", pascal_name);
         },
@@ -90,22 +98,22 @@ fn create_index_file(path: &str, name: &String) -> Result<(), Error> {
     Ok(())
 }
 
-fn create_entity_file(name: &String, pascal_name: &String) -> Result<(), Error> {
+fn create_entity_file(path: &str, name: &String, pascal_name: &String) -> Result<(), Error> {
     let template = include_str!("./templates/entity/entity_template.ts")
         .replace("{pascal-name}", &pascal_name);
 
-    let mut file = File::create(format!("./{}.entity.ts", name))?;
+    let mut file = File::create(format!("{}/{}.entity.ts", path, name))?;
     write!(file, "{}", template)?;
 
     Ok(())
 }
 
-fn create_model_file(name: &String, pascal_name: &String) -> Result<(), Error> {
+fn create_model_file(path: &str, name: &String, pascal_name: &String) -> Result<(), Error> {
     let template = include_str!("./templates/model/model_template.ts")
         .replace("{pascal-name}", &pascal_name)
         .replace("{name}", &name);
 
-    let mut file = File::create(format!("./{}.model.ts", name))?;
+    let mut file = File::create(format!("{}/{}.model.ts", path, name))?;
     write!(file, "{}", template)?;
 
     Ok(())
