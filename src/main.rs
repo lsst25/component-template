@@ -24,7 +24,7 @@ fn main() -> std::io::Result<()> {
 
     match template_type {
         Template::Component => {
-            let path = if Path::new("./ui").exists() { "./ui" } else { "." };
+            let path = template_type.get_path();
 
             if Path::exists(Path::new(format!("{}/{}", path, name).as_str())) {
                 println!("Component {} already exists.", pascal_name);
@@ -41,7 +41,7 @@ fn main() -> std::io::Result<()> {
         },
 
         Template::Entity => {
-            let path = if Path::new("./entities").exists() { "./entities" } else { "." };
+            let path = template_type.get_path();
 
             if Path::exists(Path::new(format!("{}/{}.entity.ts", path, name).as_str())) {
                 println!("Entity {} already exists.", pascal_name);
@@ -54,7 +54,7 @@ fn main() -> std::io::Result<()> {
         },
 
         Template::Model => {
-            let path = if Path::new("./models").exists() { "./models" } else { "." };
+            let path = template_type.get_path();
 
             if Path::exists(Path::new(format!("{}/{}.model.ts", path, name).as_str())) {
                 println!("Model {} already exists.", pascal_name);
