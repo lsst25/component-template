@@ -1,17 +1,17 @@
-pub enum TemplateType {
+pub enum Template {
     Component,
     Entity,
     Model,
     Unknown,
 }
 
-impl From<&str> for TemplateType {
+impl From<&str> for Template {
     fn from(item: &str) -> Self {
         match item {
-            "component" | "c" => TemplateType::Component,
-            "entity" | "e" => TemplateType::Entity,
-            "model" | "m" => TemplateType::Model,
-            _ => TemplateType::Unknown,
+            "component" | "c" => Template::Component,
+            "entity" | "e" => Template::Entity,
+            "model" | "m" => Template::Model,
+            _ => Template::Unknown,
         }
     }
 }

@@ -7,7 +7,7 @@ use std::io::Error;
 use std::io::prelude::*;
 use std::path::Path;
 
-use template_type::TemplateType;
+use template_type::Template;
 use utils::to_pascal_case;
 
 fn main() -> std::io::Result<()> {
@@ -20,10 +20,10 @@ fn main() -> std::io::Result<()> {
     let name = &args[2];
     let pascal_name = to_pascal_case(name);
 
-    let template_type = TemplateType::from(args[1].as_str());
+    let template_type = Template::from(args[1].as_str());
 
     match template_type {
-        TemplateType::Component => {
+        Template::Component => {
             let path = if Path::new("./ui").exists() { "./ui" } else { "." };
 
             if Path::exists(Path::new(format!("{}/{}", path, name).as_str())) {
@@ -40,7 +40,7 @@ fn main() -> std::io::Result<()> {
             println!("Component {} created.", pascal_name);
         },
 
-        TemplateType::Entity => {
+        Template::Entity => {
             let path = if Path::new("./entities").exists() { "./entities" } else { "." };
 
             if Path::exists(Path::new(format!("{}/{}.entity.ts", path, name).as_str())) {
@@ -53,7 +53,7 @@ fn main() -> std::io::Result<()> {
             println!("Entity {} created.", pascal_name);
         },
 
-        TemplateType::Model => {
+        Template::Model => {
             let path = if Path::new("./models").exists() { "./models" } else { "." };
 
             if Path::exists(Path::new(format!("{}/{}.model.ts", path, name).as_str())) {
@@ -66,7 +66,7 @@ fn main() -> std::io::Result<()> {
             println!("Model {} created.", pascal_name);
         },
 
-        TemplateType::Unknown => {
+        Template::Unknown => {
             println!("Unknown template: {}", args[1]);
             return Ok(());
         }
