@@ -79,7 +79,7 @@ fn create_component_file(path: &str, name: &String, pascal_name: &String) -> Res
     let template = include_str!("./templates/component/component_template.tsx")
         .replace("{component}", &pascal_name);
 
-    let mut file = File::create(format!("{}/{}/{}.component.tsx", path, name, name))?;
+    let mut file = File::create(format!("{path}/{name}/{name}.component.tsx"))?;
     write!(file, "{}", template)?;
 
     Ok(())
@@ -89,7 +89,7 @@ fn create_index_file(path: &str, name: &String) -> Result<(), Error> {
     let template = include_str!("./templates/component/index_template.ts")
         .replace("{component}", name);
 
-    let mut file = File::create(format!("{}/{}/index.ts", path, name))?;
+    let mut file = File::create(format!("{path}/{name}/index.ts"))?;
     write!(file, "{}", template)?;
 
     Ok(())
@@ -99,7 +99,7 @@ fn create_entity_file(path: &str, name: &String, pascal_name: &String) -> Result
     let template = include_str!("./templates/entity/entity_template.ts")
         .replace("{pascal-name}", &pascal_name);
 
-    let mut file = File::create(format!("{}/{}.entity.ts", path, name))?;
+    let mut file = File::create(format!("{path}/{name}.entity.ts"))?;
     write!(file, "{}", template)?;
 
     Ok(())
@@ -110,7 +110,7 @@ fn create_model_file(path: &str, name: &String, pascal_name: &String) -> Result<
         .replace("{pascal-name}", &pascal_name)
         .replace("{name}", &name);
 
-    let mut file = File::create(format!("{}/{}.model.ts", path, name))?;
+    let mut file = File::create(format!("{path}/{name}.model.ts"))?;
     write!(file, "{}", template)?;
 
     Ok(())
@@ -121,7 +121,7 @@ fn create_stories_file(path: &str, name: &String, pascal_name: &String) -> Resul
         .replace("{pascal-name}", &pascal_name)
         .replace("{name}", &name);
 
-    let mut file = File::create(format!("{}/{}/{}.stories.tsx", path, name, name))?;
+    let mut file = File::create(format!("{path}/{name}/{name}.stories.tsx"))?;
     write!(file, "{}", template)?;
 
     Ok(())
