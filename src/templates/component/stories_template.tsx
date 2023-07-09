@@ -1,4 +1,4 @@
-import { {pascal-name} } from "../{name}";
+import { {pascal-name} } from "../{name}.component";
 
 export default {
   title: "_____/{pascal-name}",
