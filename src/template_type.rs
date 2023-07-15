@@ -8,6 +8,7 @@ pub enum Template {
     Component,
     Entity,
     Model,
+    GetUseCase,
     Unknown,
 }
 
@@ -17,6 +18,7 @@ impl From<&str> for Template {
             "component" | "c" => Template::Component,
             "entity" | "e" => Template::Entity,
             "model" | "m" => Template::Model,
+            "get-use-case" | "g" => Template::GetUseCase,
             _ => Template::Unknown,
         }
     }
@@ -28,6 +30,7 @@ impl Template {
             Template::Component => if self.home_dir().exists() { "./ui" } else { "." },
             Template::Entity => if self.home_dir().exists() { "./entities" } else { "." },
             Template::Model => if self.home_dir().exists() { "./models" } else { "." },
+            Template::GetUseCase => if self.home_dir().exists() { "./use-cases" } else { "." },
             Template::Unknown => ".",
         }
     }
@@ -37,6 +40,7 @@ impl Template {
             Template::Component => Path::new("./ui"),
             Template::Entity => Path::new("./entities"),
             Template::Model => Path::new("./models"),
+            Template::GetUseCase => Path::new("./use-cases"),
             Template::Unknown => Path::new("."),
         }
     }
@@ -88,6 +92,23 @@ impl Template {
                 println!("Model {} created.", pascal_name);
             },
 
+            Template::GetUseCase => {
+                let path = self.get_path();
+
+                if Path::exists(Path::new(format!("{path}/get-{name}").as_str())) {
+                    println!("Get use case {name} already exists.");
+                    return Ok(());
+                }
+
+                fs::create_dir(format!("{}/get-{}", path, name))?;
+
+                create_use_case_index_file(path, name)?;
+                create_get_use_case_query_file(path, name, &pascal_name)?;
+                create_get_use_case_query_keys_file(path, name, &pascal_name)?;
+
+                println!("Get use case {} created.", pascal_name);
+            },
+
             Template::Unknown => {
                 println!("Unknown template type.");
             },
@@ -95,6 +116,38 @@ impl Template {
 
         Ok(())
     }
+}
+
+fn create_use_case_index_file(path: &str, name: &String) -> Result<(), Error> {
+    let template = include_str!("./templates/get-use-case/index_template.ts")
+        .replace("$name$", name);
+
+    let mut file = File::create(format!("{path}/get-{name}/index.ts"))?;
+    write!(file, "{}", template)?;
+
+    Ok(())
+}
+
+fn create_get_use_case_query_file(path: &str, name: &String, pascal_name: &String) -> Result<(), Error> {
+    let template = include_str!("./templates/get-use-case/query_template.ts")
+        .replace("$name$", name)
+        .replace("$pascal_name$", pascal_name);
+
+    let mut file = File::create(format!("{path}/get-{name}/get-{name}-query.ts"))?;
+    write!(file, "{}", template)?;
+
+    Ok(())
+}
+
+fn create_get_use_case_query_keys_file(path: &str, name: &String, pascal_name: &String) -> Result<(), Error> {
+    let template = include_str!("./templates/get-use-case/query_keys_template.ts")
+        .replace("$name$", name)
+        .replace("$pascal_name$", pascal_name);
+
+    let mut file = File::create(format!("{path}/get-{name}/get-{name}-query-keys.ts"))?;
+    write!(file, "{}", template)?;
+
+    Ok(())
 }
 
 fn create_component_file(path: &str, name: &String, pascal_name: &String) -> Result<(), Error> {

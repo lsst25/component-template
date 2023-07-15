@@ -1,1 +1,1 @@
-export * from "./use-{name}-query";
+export * from "./use-$name$-query";
