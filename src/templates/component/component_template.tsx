@@ -1,9 +1,9 @@
 import { FC } from "react";
 
-export const {component}: FC = () => {
+export const $pascal_name$: FC = () => {
   return (
     <div>
-      {component} component works!
+      $pascal_name$ component works!
     </div>
   );
 };

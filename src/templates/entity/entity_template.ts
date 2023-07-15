@@ -1,7 +1,7 @@
 import { Opaque } from "features/common";
 
-export type {pascal-name}EntityId = Opaque<number, {pascal-name}Entity>;
+export type $pascal_name$EntityId = Opaque<number, $pascal_name$Entity>;
 
-export interface {pascal-name}Entity {
-  id: {pascal-name}EntityId;
+export interface $pascal_name$Entity {
+  id: $pascal_name$EntityId;
 }

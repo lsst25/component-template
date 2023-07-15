@@ -1,9 +1,9 @@
-import { {pascal-name} } from "./{name}.component";
+import { $pascal_name$ } from "./$name$.component";
 
 export default {
-  title: "_____/{pascal-name}",
-  component: {pascal-name},
+  title: "_____/$pascal_name$",
+  component: $pascal_name$,
 };
 
-export const Base = (props) => <{pascal-name} {...props} />;
+export const Base = (props) => <$pascal_name$ {...props} />;
 Base.args = {};

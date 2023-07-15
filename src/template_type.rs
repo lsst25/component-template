@@ -152,7 +152,7 @@ fn create_get_use_case_query_keys_file(path: &str, name: &str, pascal_name: &str
 
 fn create_component_file(path: &str, name: &str, pascal_name: &str) -> Result<(), Error> {
     let template = include_str!("./templates/component/component_template.tsx")
-        .replace("{component}", &pascal_name);
+        .replace("$pascal_name$", &pascal_name);
 
     let mut file = File::create(format!("{path}/{name}/{name}.component.tsx"))?;
     write!(file, "{template}")?;
@@ -162,7 +162,7 @@ fn create_component_file(path: &str, name: &str, pascal_name: &str) -> Result<()
 
 fn create_index_file(path: &str, name: &str) -> Result<(), Error> {
     let template = include_str!("./templates/component/index_template.ts")
-        .replace("{component}", name);
+        .replace("$name$", name);
 
     let mut file = File::create(format!("{path}/{name}/index.ts"))?;
     write!(file, "{template}")?;
@@ -172,7 +172,7 @@ fn create_index_file(path: &str, name: &str) -> Result<(), Error> {
 
 fn create_entity_file(path: &str, name: &str, pascal_name: &str) -> Result<(), Error> {
     let template = include_str!("./templates/entity/entity_template.ts")
-        .replace("{pascal-name}", &pascal_name);
+        .replace("$pascal_name$", &pascal_name);
 
     let mut file = File::create(format!("{path}/{name}.entity.ts"))?;
     write!(file, "{template}")?;
@@ -182,8 +182,8 @@ fn create_entity_file(path: &str, name: &str, pascal_name: &str) -> Result<(), E
 
 fn create_model_file(path: &str, name: &str, pascal_name: &str) -> Result<(), Error> {
     let template = include_str!("./templates/model/model_template.ts")
-        .replace("{pascal-name}", &pascal_name)
-        .replace("{name}", &name);
+        .replace("$pascal_name$", &pascal_name)
+        .replace("$name$", &name);
 
     let mut file = File::create(format!("{path}/{name}.model.ts"))?;
     write!(file, "{template}")?;
@@ -193,8 +193,8 @@ fn create_model_file(path: &str, name: &str, pascal_name: &str) -> Result<(), Er
 
 fn create_stories_file(path: &str, name: &str, pascal_name: &str) -> Result<(), Error> {
     let template = include_str!("./templates/component/stories_template.tsx")
-        .replace("{pascal-name}", &pascal_name)
-        .replace("{name}", &name);
+        .replace("$pascal_name$", &pascal_name)
+        .replace("$name$", &name);
 
     let mut file = File::create(format!("{path}/{name}/{name}.stories.tsx"))?;
     write!(file, "{template}")?;

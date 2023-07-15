@@ -1,1 +1,1 @@
-export * from "./{component}.component";
+export * from "./$name$.component";
