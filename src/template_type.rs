@@ -9,6 +9,7 @@ pub enum Template {
     Entity,
     Model,
     GetUseCase,
+    MutationUseCase,
     Unknown,
 }
 
@@ -19,6 +20,7 @@ impl From<&str> for Template {
             "entity" | "e" => Template::Entity,
             "model" | "m" => Template::Model,
             "get-use-case" | "g" => Template::GetUseCase,
+            "mutation-use-case" | "mu" => Template::MutationUseCase,
             _ => Template::Unknown,
         }
     }
@@ -31,6 +33,7 @@ impl Template {
             Template::Entity => if self.home_dir().exists() { "./entities" } else { "." },
             Template::Model => if self.home_dir().exists() { "./models" } else { "." },
             Template::GetUseCase => if self.home_dir().exists() { "./use-cases" } else { "." },
+            Template::MutationUseCase => if self.home_dir().exists() { "./use-cases" } else { "." },
             Template::Unknown => ".",
         }
     }
@@ -41,6 +44,7 @@ impl Template {
             Template::Entity => Path::new("./entities"),
             Template::Model => Path::new("./models"),
             Template::GetUseCase => Path::new("./use-cases"),
+            Template::MutationUseCase => Path::new("./use-cases"),
             Template::Unknown => Path::new("."),
         }
     }
@@ -109,6 +113,22 @@ impl Template {
                 println!("Get use case {pascal_name} created.");
             },
 
+            Template::MutationUseCase => {
+                let path = self.get_path();
+
+                if Path::exists(Path::new(format!("{path}/{name}").as_str())) {
+                    println!("Mutation use case {name} already exists.");
+                    return Ok(());
+                }
+
+                fs::create_dir(format!("{path}/{name}"))?;
+
+                create_mutation_use_case_index_file(&path, &name)?;
+                create_mutation_use_case_mutation_file(&path, &name, &pascal_name)?;
+
+                println!("Mutation use case {pascal_name} created.");
+            },
+
             Template::Unknown => {
                 println!("Unknown template type.");
             },
@@ -116,6 +136,27 @@ impl Template {
 
         Ok(())
     }
+}
+
+fn create_mutation_use_case_index_file(path: &str, name: &str) -> Result<(), Error> {
+    let template = include_str!("./templates/mutation-use-case/index_template.ts")
+        .replace("$name$", &name);
+
+    let mut file = File::create(format!("{path}/{name}/index.ts"))?;
+    write!(file, "{template}")?;
+
+    Ok(())
+}
+
+fn create_mutation_use_case_mutation_file(path: &str, name: &str, pascal_name: &str) -> Result<(), Error> {
+    let template = include_str!("./templates/mutation-use-case/mutation_template.ts")
+        .replace("$name$", &name)
+        .replace("$pascal_name$", &pascal_name);
+
+    let mut file = File::create(format!("{path}/{name}/use-{name}-mutation.ts"))?;
+    write!(file, "{template}")?;
+
+    Ok(())
 }
 
 fn create_use_case_index_file(path: &str, name: &str) -> Result<(), Error> {
