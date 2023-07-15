@@ -1,1 +1,1 @@
-export * from "./$name$-mutation";
+export * from "./use-$name$-mutation";
