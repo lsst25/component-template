@@ -10,7 +10,7 @@ import { $pascal_name$Model } from "../../models/$name$.model";
 // TODO: change endpoint
 const endpoint = APIService.getUrl("/$name$");
 
-export const use$paskal_name$Query = () => {
+export const use$pascal_name$Query = () => {
   return useQuery<$pascal_name$Model[], HttpError>({
     queryKey: $pascal_name$QueryKeys.all(),
     queryFn: async () => {
