@@ -133,7 +133,7 @@ fn create_get_use_case_query_file(path: &str, name: &String, pascal_name: &Strin
         .replace("$name$", name)
         .replace("$pascal_name$", pascal_name);
 
-    let mut file = File::create(format!("{path}/get-{name}/get-{name}-query.ts"))?;
+    let mut file = File::create(format!("{path}/get-{name}/use-{name}-query.ts"))?;
     write!(file, "{}", template)?;
 
     Ok(())
@@ -144,7 +144,7 @@ fn create_get_use_case_query_keys_file(path: &str, name: &String, pascal_name: &
         .replace("$name$", name)
         .replace("$pascal_name$", pascal_name);
 
-    let mut file = File::create(format!("{path}/get-{name}/get-{name}-query-keys.ts"))?;
+    let mut file = File::create(format!("{path}/get-{name}/{name}-query-keys.ts"))?;
     write!(file, "{}", template)?;
 
     Ok(())
