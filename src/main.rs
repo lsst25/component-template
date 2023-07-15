@@ -3,7 +3,6 @@ pub mod utils;
 
 use std::env;
 use template_type::Template;
-use utils::to_pascal_case;
 
 fn main() -> std::io::Result<()> {
     let args: Vec<String> = env::args().collect();
