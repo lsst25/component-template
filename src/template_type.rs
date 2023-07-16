@@ -4,7 +4,7 @@ use std::io::prelude::*;
 use std::path::Path;
 use crate::utils::to_pascal_case;
 
-pub enum Template {
+pub enum TemplateType {
     Component,
     Entity,
     Model,
@@ -13,39 +13,39 @@ pub enum Template {
     Unknown,
 }
 
-impl From<&str> for Template {
+impl From<&str> for TemplateType {
     fn from(item: &str) -> Self {
         match item {
-            "component" | "c" => Template::Component,
-            "entity" | "e" => Template::Entity,
-            "model" | "m" => Template::Model,
-            "get-use-case" | "g" => Template::GetUseCase,
-            "mutation-use-case" | "mu" => Template::MutationUseCase,
-            _ => Template::Unknown,
+            "component" | "c" => TemplateType::Component,
+            "entity" | "e" => TemplateType::Entity,
+            "model" | "m" => TemplateType::Model,
+            "get-use-case" | "g" => TemplateType::GetUseCase,
+            "mutation-use-case" | "mu" => TemplateType::MutationUseCase,
+            _ => TemplateType::Unknown,
         }
     }
 }
 
-impl Template {
+impl TemplateType {
     fn get_path(&self) -> &str {
         match self {
-            Template::Component => if self.home_dir().exists() { "./ui" } else { "." },
-            Template::Entity => if self.home_dir().exists() { "./entities" } else { "." },
-            Template::Model => if self.home_dir().exists() { "./models" } else { "." },
-            Template::GetUseCase => if self.home_dir().exists() { "./use-cases" } else { "." },
-            Template::MutationUseCase => if self.home_dir().exists() { "./use-cases" } else { "." },
-            Template::Unknown => ".",
+            TemplateType::Component => if self.home_dir().exists() { "./ui" } else { "." },
+            TemplateType::Entity => if self.home_dir().exists() { "./entities" } else { "." },
+            TemplateType::Model => if self.home_dir().exists() { "./models" } else { "." },
+            TemplateType::GetUseCase => if self.home_dir().exists() { "./use-cases" } else { "." },
+            TemplateType::MutationUseCase => if self.home_dir().exists() { "./use-cases" } else { "." },
+            TemplateType::Unknown => ".",
         }
     }
 
     fn home_dir(&self) -> &Path {
         match self {
-            Template::Component => Path::new("./ui"),
-            Template::Entity => Path::new("./entities"),
-            Template::Model => Path::new("./models"),
-            Template::GetUseCase => Path::new("./use-cases"),
-            Template::MutationUseCase => Path::new("./use-cases"),
-            Template::Unknown => Path::new("."),
+            TemplateType::Component => Path::new("./ui"),
+            TemplateType::Entity => Path::new("./entities"),
+            TemplateType::Model => Path::new("./models"),
+            TemplateType::GetUseCase => Path::new("./use-cases"),
+            TemplateType::MutationUseCase => Path::new("./use-cases"),
+            TemplateType::Unknown => Path::new("."),
         }
     }
 
@@ -53,7 +53,7 @@ impl Template {
         let pascal_name = to_pascal_case(&name);
 
         match self {
-            Template::Component => {
+            TemplateType::Component => {
                 let path = self.get_path();
 
                 if Path::exists(Path::new(format!("{path}/{name}").as_str())) {
@@ -70,7 +70,7 @@ impl Template {
                 println!("Component {pascal_name} created.");
             },
 
-            Template::Entity => {
+            TemplateType::Entity => {
                 let path = self.get_path();
 
                 if Path::exists(Path::new(format!("{path}/{name}.entity.ts").as_str())) {
@@ -83,7 +83,7 @@ impl Template {
                 println!("Entity {pascal_name} created.");
             },
 
-            Template::Model => {
+            TemplateType::Model => {
                 let path = self.get_path();
 
                 if Path::exists(Path::new(format!("{path}/{name}.model.ts").as_str())) {
@@ -96,7 +96,7 @@ impl Template {
                 println!("Model {pascal_name} created.");
             },
 
-            Template::GetUseCase => {
+            TemplateType::GetUseCase => {
                 let path = self.get_path();
 
                 if Path::exists(Path::new(format!("{path}/get-{name}").as_str())) {
@@ -113,7 +113,7 @@ impl Template {
                 println!("Get use case {pascal_name} created.");
             },
 
-            Template::MutationUseCase => {
+            TemplateType::MutationUseCase => {
                 let path = self.get_path();
 
                 if Path::exists(Path::new(format!("{path}/{name}").as_str())) {
@@ -129,7 +129,7 @@ impl Template {
                 println!("Mutation use case {pascal_name} created.");
             },
 
-            Template::Unknown => {
+            TemplateType::Unknown => {
                 println!("Unknown template type.");
             },
         }

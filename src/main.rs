@@ -2,7 +2,7 @@ mod template_type;
 pub mod utils;
 
 use std::env;
-use template_type::Template;
+use template_type::TemplateType;
 
 fn main() -> std::io::Result<()> {
     let args: Vec<String> = env::args().collect();
@@ -12,7 +12,7 @@ fn main() -> std::io::Result<()> {
     }
 
     let name = &args[2];
-    let template_type = Template::from(args[1].as_str());
+    let template_type = TemplateType::from(args[1].as_str());
 
     template_type.create_files(name)?;
 
