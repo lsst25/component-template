@@ -44,19 +44,19 @@ impl TemplateBuilder {
                 create_stories_file(path, name, pascal_name)?;
 
                 println!("Component {pascal_name} created.");
-                Result::Ok(())
+                Ok(())
             },
 
             TemplateType::Entity => {
                 if Path::exists(Path::new(format!("{path}/{name}.entity.ts").as_str())) {
                     println!("Entity {pascal_name} already exists.");
-                    return Ok(());
+                    Ok(())
                 }
 
                 create_entity_file(path, name, pascal_name)?;
 
                 println!("Entity {pascal_name} created.");
-                Result::Ok(())
+                Ok(())
             },
 
             TemplateType::Model => {
@@ -68,7 +68,7 @@ impl TemplateBuilder {
                 create_model_file(path, name, pascal_name)?;
 
                 println!("Model {pascal_name} created.");
-                Result::Ok(())
+                Ok(())
             },
 
             TemplateType::GetUseCase => {
@@ -84,7 +84,7 @@ impl TemplateBuilder {
                 create_get_use_case_query_keys_file(path, name, pascal_name)?;
 
                 println!("Get use case {pascal_name} created.");
-                Result::Ok(())
+                Ok(())
             },
 
             TemplateType::MutationUseCase => {
@@ -97,12 +97,12 @@ impl TemplateBuilder {
 
                 create_mutation_use_case_index_file(path, name)?;
                 create_mutation_use_case_mutation_file(path, name, pascal_name)?;
-                Result::Ok(())
+                Ok(())
             },
 
             TemplateType::Unknown => {
                 println!("Unknown template type.");
-                Result::Err(Error::new(std::io::ErrorKind::Other, "Unknown template type."))
+                Ok(())
             },
         }
     }
