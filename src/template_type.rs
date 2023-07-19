@@ -109,7 +109,7 @@ impl TemplateBuilder {
 }
 
 
-pub enum TemplateType {
+enum TemplateType {
     Component,
     Entity,
     Model,
