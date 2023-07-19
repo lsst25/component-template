@@ -4,6 +4,111 @@ use std::io::prelude::*;
 use std::path::Path;
 use crate::utils::to_pascal_case;
 
+pub struct TemplateBuilder {
+    template_type: TemplateType,
+    name: String,
+    pub pascal_name: String,
+    path: String,
+}
+
+impl TemplateBuilder {
+    pub fn new(template_type: &str, name: &str) -> Self {
+        let template_type = TemplateType::from(template_type);
+        let pascal_name = to_pascal_case(&name);
+        let path = template_type.get_path();
+
+        TemplateBuilder {
+            name: name.to_string(),
+            pascal_name,
+            path: path.to_string(),
+            template_type,
+        }
+    }
+
+    pub fn create_files(&self) -> Result<(), Error> {
+        let name = &self.name;
+        let pascal_name = &self.pascal_name;
+        let path = &self.path;
+
+        match self.template_type {
+            TemplateType::Component => {
+                if Path::exists(Path::new(format!("{path}/{name}").as_str())) {
+                    println!("Component {pascal_name} already exists.");
+                    return Ok(());
+                }
+
+                fs::create_dir(format!("{path}/{name}"))?;
+
+                create_index_file(path, name)?;
+                create_component_file(path, name, pascal_name)?;
+                create_stories_file(path, name, pascal_name)?;
+
+                println!("Component {pascal_name} created.");
+                Result::Ok(())
+            },
+
+            TemplateType::Entity => {
+                if Path::exists(Path::new(format!("{path}/{name}.entity.ts").as_str())) {
+                    println!("Entity {pascal_name} already exists.");
+                    return Ok(());
+                }
+
+                create_entity_file(path, name, pascal_name)?;
+
+                println!("Entity {pascal_name} created.");
+                Result::Ok(())
+            },
+
+            TemplateType::Model => {
+                if Path::exists(Path::new(format!("{path}/{name}.model.ts").as_str())) {
+                    println!("Model {pascal_name} already exists.");
+                    return Ok(());
+                }
+
+                create_model_file(path, name, pascal_name)?;
+
+                println!("Model {pascal_name} created.");
+                Result::Ok(())
+            },
+
+            TemplateType::GetUseCase => {
+                if Path::exists(Path::new(format!("{path}/get-{name}").as_str())) {
+                    println!("Get use case {name} already exists.");
+                    return Ok(());
+                }
+
+                fs::create_dir(format!("{path}/get-{name}"))?;
+
+                create_use_case_index_file(path, name)?;
+                create_get_use_case_query_file(path, name, pascal_name)?;
+                create_get_use_case_query_keys_file(path, name, pascal_name)?;
+
+                println!("Get use case {pascal_name} created.");
+                Result::Ok(())
+            },
+
+            TemplateType::MutationUseCase => {
+                if Path::exists(Path::new(format!("{path}/mutation-{name}").as_str())) {
+                    println!("Mutation use case {name} already exists.");
+                    return Ok(());
+                }
+
+                fs::create_dir(format!("{path}/mutation-{name}"))?;
+
+                create_mutation_use_case_index_file(path, name)?;
+                create_mutation_use_case_mutation_file(path, name, pascal_name)?;
+                Result::Ok(())
+            },
+
+            TemplateType::Unknown => {
+                println!("Unknown template type.");
+                Result::Err(Error::new(std::io::ErrorKind::Other, "Unknown template type."))
+            },
+        }
+    }
+}
+
+
 pub enum TemplateType {
     Component,
     Entity,
@@ -47,94 +152,6 @@ impl TemplateType {
             TemplateType::MutationUseCase => Path::new("./use-cases"),
             TemplateType::Unknown => Path::new("."),
         }
-    }
-
-    pub fn create_files(&self, name: &str) -> Result<(), Error> {
-        let pascal_name = to_pascal_case(&name);
-
-        match self {
-            TemplateType::Component => {
-                let path = self.get_path();
-
-                if Path::exists(Path::new(format!("{path}/{name}").as_str())) {
-                    println!("Component {pascal_name} already exists.");
-                    return Ok(());
-                }
-
-                fs::create_dir(format!("{path}/{name}"))?;
-
-                create_index_file(&path, &name)?;
-                create_component_file(&path, &name, &pascal_name)?;
-                create_stories_file(&path, &name, &pascal_name)?;
-
-                println!("Component {pascal_name} created.");
-            },
-
-            TemplateType::Entity => {
-                let path = self.get_path();
-
-                if Path::exists(Path::new(format!("{path}/{name}.entity.ts").as_str())) {
-                    println!("Entity {pascal_name} already exists.");
-                    return Ok(());
-                }
-
-                create_entity_file(&path, &name, &pascal_name)?;
-
-                println!("Entity {pascal_name} created.");
-            },
-
-            TemplateType::Model => {
-                let path = self.get_path();
-
-                if Path::exists(Path::new(format!("{path}/{name}.model.ts").as_str())) {
-                    println!("Model {pascal_name} already exists.");
-                    return Ok(());
-                }
-
-                create_model_file(&path, &name, &pascal_name)?;
-
-                println!("Model {pascal_name} created.");
-            },
-
-            TemplateType::GetUseCase => {
-                let path = self.get_path();
-
-                if Path::exists(Path::new(format!("{path}/get-{name}").as_str())) {
-                    println!("Get use case {name} already exists.");
-                    return Ok(());
-                }
-
-                fs::create_dir(format!("{path}/get-{name}"))?;
-
-                create_use_case_index_file(&path, &name)?;
-                create_get_use_case_query_file(&path, &name, &pascal_name)?;
-                create_get_use_case_query_keys_file(&path, &name, &pascal_name)?;
-
-                println!("Get use case {pascal_name} created.");
-            },
-
-            TemplateType::MutationUseCase => {
-                let path = self.get_path();
-
-                if Path::exists(Path::new(format!("{path}/{name}").as_str())) {
-                    println!("Mutation use case {name} already exists.");
-                    return Ok(());
-                }
-
-                fs::create_dir(format!("{path}/{name}"))?;
-
-                create_mutation_use_case_index_file(&path, &name)?;
-                create_mutation_use_case_mutation_file(&path, &name, &pascal_name)?;
-
-                println!("Mutation use case {pascal_name} created.");
-            },
-
-            TemplateType::Unknown => {
-                println!("Unknown template type.");
-            },
-        }
-
-        Ok(())
     }
 }
 
