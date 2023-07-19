@@ -39,9 +39,9 @@ impl TemplateBuilder {
 
                 fs::create_dir(format!("{path}/{name}"))?;
 
-                create_index_file(path, name)?;
-                create_component_file(path, name, pascal_name)?;
-                create_stories_file(path, name, pascal_name)?;
+                self.create_index_file()?;
+                self.create_component_file()?;
+                self.create_stories_file()?;
 
                 println!("Component {pascal_name} created.");
                 Ok(())
@@ -53,7 +53,7 @@ impl TemplateBuilder {
                     return Ok(());
                 }
 
-                create_entity_file(path, name, pascal_name)?;
+                self.create_entity_file()?;
 
                 println!("Entity {pascal_name} created.");
                 Ok(())
@@ -65,7 +65,7 @@ impl TemplateBuilder {
                     return Ok(());
                 }
 
-                create_model_file(path, name, pascal_name)?;
+                self.create_model_file()?;
 
                 println!("Model {pascal_name} created.");
                 Ok(())
@@ -79,9 +79,9 @@ impl TemplateBuilder {
 
                 fs::create_dir(format!("{path}/get-{name}"))?;
 
-                create_use_case_index_file(path, name)?;
-                create_get_use_case_query_file(path, name, pascal_name)?;
-                create_get_use_case_query_keys_file(path, name, pascal_name)?;
+                self.create_use_case_index_file()?;
+                self.create_get_use_case_query_file()?;
+                self.create_get_use_case_query_keys_file()?;
 
                 println!("Get use case {pascal_name} created.");
                 Ok(())
@@ -95,8 +95,8 @@ impl TemplateBuilder {
 
                 fs::create_dir(format!("{path}/mutation-{name}"))?;
 
-                create_mutation_use_case_index_file(path, name)?;
-                create_mutation_use_case_mutation_file(path, name, pascal_name)?;
+                self.create_mutation_use_case_index_file()?;
+                self.create_mutation_use_case_mutation_file()?;
                 Ok(())
             },
 
@@ -105,6 +105,112 @@ impl TemplateBuilder {
                 Ok(())
             },
         }
+    }
+
+
+    fn create_mutation_use_case_index_file(&self) -> Result<(), Error> {
+        let template = include_str!("./templates/mutation-use-case/index_template.ts")
+            .replace("$name$", &self.name);
+
+        let mut file = File::create(format!("{}/{}/index.ts", &self.path, &self.name))?;
+        write!(file, "{template}")?;
+
+        Ok(())
+    }
+
+    fn create_mutation_use_case_mutation_file(&self) -> Result<(), Error> {
+        let template = include_str!("./templates/mutation-use-case/mutation_template.ts")
+            .replace("$name$", &self.name)
+            .replace("$pascal_name$", &self.pascal_name);
+
+        let mut file = File::create(format!("{}/{}/use-{}-mutation.ts", &self.path, &self.name, &self.name))?;
+        write!(file, "{template}")?;
+
+        Ok(())
+    }
+
+    fn create_use_case_index_file(&self) -> Result<(), Error> {
+        let template = include_str!("./templates/get-use-case/index_template.ts")
+            .replace("$name$", &self.name);
+
+        let mut file = File::create(format!("{}/get-{}/index.ts", &self.path, &self.name))?;
+        write!(file, "{template}")?;
+
+        Ok(())
+    }
+
+    fn create_get_use_case_query_file(&self) -> Result<(), Error> {
+        let template = include_str!("./templates/get-use-case/query_template.ts")
+            .replace("$name$", &self.name)
+            .replace("$pascal_name$", &self.pascal_name);
+
+        let mut file = File::create(format!("{}/get-{}/use-{}-query.ts", &self.path, &self.name, &self.name))?;
+        write!(file, "{template}")?;
+
+        Ok(())
+    }
+
+    fn create_get_use_case_query_keys_file(&self) -> Result<(), Error> {
+        let template = include_str!("./templates/get-use-case/query_keys_template.ts")
+            .replace("$name$", &self.name)
+            .replace("$pascal_name$", &self.pascal_name);
+
+        let mut file = File::create(format!("{}/get-{}/{}-query-keys.ts", &self.path, &self.name, &self.name))?;
+        write!(file, "{template}")?;
+
+        Ok(())
+    }
+
+    fn create_component_file(&self) -> Result<(), Error> {
+        let template = include_str!("./templates/component/component_template.tsx")
+            .replace("$pascal_name$", &self.pascal_name);
+
+        let mut file = File::create(format!("{}/{}/{}.component.tsx", &self.path, &self.name, &self.name))?;
+        write!(file, "{template}")?;
+
+        Ok(())
+    }
+
+    fn create_index_file(&self) -> Result<(), Error> {
+        let template = include_str!("./templates/component/index_template.ts")
+            .replace("$name$", &self.name);
+
+        let mut file = File::create(format!("{}/{}/index.ts", &self.path, &self.name))?;
+        write!(file, "{template}")?;
+
+        Ok(())
+    }
+
+    fn create_entity_file(&self) -> Result<(), Error> {
+        let template = include_str!("./templates/entity/entity_template.ts")
+            .replace("$pascal_name$", &self.pascal_name);
+
+        let mut file = File::create(format!("{}/{}.entity.ts", &self.path, &self.name))?;
+        write!(file, "{template}")?;
+
+        Ok(())
+    }
+
+    fn create_model_file(&self) -> Result<(), Error> {
+        let template = include_str!("./templates/model/model_template.ts")
+            .replace("$pascal_name$", &self.pascal_name)
+            .replace("$name$", &self.name);
+
+        let mut file = File::create(format!("{}/{}.model.ts", &self.path, &self.name))?;
+        write!(file, "{template}")?;
+
+        Ok(())
+    }
+
+    fn create_stories_file(&self) -> Result<(), Error> {
+        let template = include_str!("./templates/component/stories_template.tsx")
+            .replace("$pascal_name$", &self.pascal_name)
+            .replace("$name$", &self.name);
+
+        let mut file = File::create(format!("{}/{}/{}.stories.tsx", &self.path, &self.name, &self.name))?;
+        write!(file, "{template}")?;
+
+        Ok(())
     }
 }
 
@@ -153,109 +259,4 @@ impl TemplateType {
             TemplateType::Unknown => Path::new("."),
         }
     }
-}
-
-fn create_mutation_use_case_index_file(path: &str, name: &str) -> Result<(), Error> {
-    let template = include_str!("./templates/mutation-use-case/index_template.ts")
-        .replace("$name$", &name);
-
-    let mut file = File::create(format!("{path}/{name}/index.ts"))?;
-    write!(file, "{template}")?;
-
-    Ok(())
-}
-
-fn create_mutation_use_case_mutation_file(path: &str, name: &str, pascal_name: &str) -> Result<(), Error> {
-    let template = include_str!("./templates/mutation-use-case/mutation_template.ts")
-        .replace("$name$", &name)
-        .replace("$pascal_name$", &pascal_name);
-
-    let mut file = File::create(format!("{path}/{name}/use-{name}-mutation.ts"))?;
-    write!(file, "{template}")?;
-
-    Ok(())
-}
-
-fn create_use_case_index_file(path: &str, name: &str) -> Result<(), Error> {
-    let template = include_str!("./templates/get-use-case/index_template.ts")
-        .replace("$name$", &name);
-
-    let mut file = File::create(format!("{path}/get-{name}/index.ts"))?;
-    write!(file, "{template}")?;
-
-    Ok(())
-}
-
-fn create_get_use_case_query_file(path: &str, name: &str, pascal_name: &str) -> Result<(), Error> {
-    let template = include_str!("./templates/get-use-case/query_template.ts")
-        .replace("$name$", &name)
-        .replace("$pascal_name$", &pascal_name);
-
-    let mut file = File::create(format!("{path}/get-{name}/use-{name}-query.ts"))?;
-    write!(file, "{template}")?;
-
-    Ok(())
-}
-
-fn create_get_use_case_query_keys_file(path: &str, name: &str, pascal_name: &str) -> Result<(), Error> {
-    let template = include_str!("./templates/get-use-case/query_keys_template.ts")
-        .replace("$name$", &name)
-        .replace("$pascal_name$", &pascal_name);
-
-    let mut file = File::create(format!("{path}/get-{name}/{name}-query-keys.ts"))?;
-    write!(file, "{template}")?;
-
-    Ok(())
-}
-
-fn create_component_file(path: &str, name: &str, pascal_name: &str) -> Result<(), Error> {
-    let template = include_str!("./templates/component/component_template.tsx")
-        .replace("$pascal_name$", &pascal_name);
-
-    let mut file = File::create(format!("{path}/{name}/{name}.component.tsx"))?;
-    write!(file, "{template}")?;
-
-    Ok(())
-}
-
-fn create_index_file(path: &str, name: &str) -> Result<(), Error> {
-    let template = include_str!("./templates/component/index_template.ts")
-        .replace("$name$", name);
-
-    let mut file = File::create(format!("{path}/{name}/index.ts"))?;
-    write!(file, "{template}")?;
-
-    Ok(())
-}
-
-fn create_entity_file(path: &str, name: &str, pascal_name: &str) -> Result<(), Error> {
-    let template = include_str!("./templates/entity/entity_template.ts")
-        .replace("$pascal_name$", &pascal_name);
-
-    let mut file = File::create(format!("{path}/{name}.entity.ts"))?;
-    write!(file, "{template}")?;
-
-    Ok(())
-}
-
-fn create_model_file(path: &str, name: &str, pascal_name: &str) -> Result<(), Error> {
-    let template = include_str!("./templates/model/model_template.ts")
-        .replace("$pascal_name$", &pascal_name)
-        .replace("$name$", &name);
-
-    let mut file = File::create(format!("{path}/{name}.model.ts"))?;
-    write!(file, "{template}")?;
-
-    Ok(())
-}
-
-fn create_stories_file(path: &str, name: &str, pascal_name: &str) -> Result<(), Error> {
-    let template = include_str!("./templates/component/stories_template.tsx")
-        .replace("$pascal_name$", &pascal_name)
-        .replace("$name$", &name);
-
-    let mut file = File::create(format!("{path}/{name}/{name}.stories.tsx"))?;
-    write!(file, "{template}")?;
-
-    Ok(())
 }
