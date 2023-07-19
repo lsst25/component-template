@@ -50,7 +50,7 @@ impl TemplateBuilder {
             TemplateType::Entity => {
                 if Path::exists(Path::new(format!("{path}/{name}.entity.ts").as_str())) {
                     println!("Entity {pascal_name} already exists.");
-                    Ok(())
+                    return Ok(());
                 }
 
                 create_entity_file(path, name, pascal_name)?;
