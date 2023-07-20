@@ -1,6 +1,5 @@
 use std::fs::{self, File};
-use std::io::Error;
-use std::io::prelude::*;
+use std::io::{ Error, prelude::* };
 use std::path::Path;
 use crate::utils::to_pascal_case;
 
