@@ -11,11 +11,17 @@ fn main() -> std::io::Result<()> {
         return Ok(());
     }
 
-    let template = args[1].as_str();
-    let name = &args[2];
+    let (template, name) = parse_config(&args);
 
     let builder = TemplateBuilder::new(template, name);
     builder.create_files()?;
 
     Ok(())
+}
+
+fn parse_config(args: &[String]) -> (&str, &str) {
+    let template = &args[1];
+    let name = &args[2];
+
+    (template, name)
 }
