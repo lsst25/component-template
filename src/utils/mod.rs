@@ -9,3 +9,13 @@ pub fn to_pascal_case(name: &str) -> String {
         })
         .collect::<String>()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn internal() {
+        assert_eq!("FooBar", to_pascal_case("foo-bar"));
+    }
+}
