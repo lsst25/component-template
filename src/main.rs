@@ -11,17 +11,22 @@ fn main() -> std::io::Result<()> {
         return Ok(());
     }
 
-    let (template, name) = parse_config(&args);
+    let config = parse_config(&args);
 
-    let builder = TemplateBuilder::new(template, name);
+    let builder = TemplateBuilder::new(&config.template, &config.name);
     builder.create_files()?;
 
     Ok(())
 }
 
-fn parse_config(args: &[String]) -> (&str, &str) {
-    let template = &args[1];
-    let name = &args[2];
+struct Config {
+    template: String,
+    name: String,
+}
 
-    (template, name)
+fn parse_config(args: &[String]) -> Config {
+    let template = args[1].clone();
+    let name = args[2].clone();
+
+    Config { template, name }
 }
