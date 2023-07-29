@@ -10,13 +10,20 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn build(args: &[String]) -> Result<Config, &'static str> {
-        if args.len() < 3 {
-            return Err("Please provide a template and a name.");
-        }
+    pub fn build(
+        mut args: impl Iterator<Item = String>,
+    ) -> Result<Config, &'static str> {
+        args.next();
 
-        let template = args[1].clone();
-        let name = args[2].clone();
+        let template = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a template argument"),
+        };
+
+        let name = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a name argument"),
+        };
 
         Ok(Config { template, name })
     }
