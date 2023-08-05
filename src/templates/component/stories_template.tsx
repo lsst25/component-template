@@ -1,9 +1,15 @@
 import { $pascal_name$ } from "./$name$.component";
 
-export default {
+const meta: Meta<typeof $pascal_name$> = {
   title: "_____/$pascal_name$",
   component: $pascal_name$,
 };
 
-export const Base = (props) => <$pascal_name$ {...props} />;
-Base.args = {};
+export default meta;
+type Story = StoryObj<typeof $pascal_name$>;
+
+export const Base: Story = {
+  args: {},
+  render: (args) => <$pascal_name$ {...args} />,
+};
+
