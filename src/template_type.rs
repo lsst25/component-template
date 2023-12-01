@@ -109,6 +109,31 @@ impl TemplateBuilder {
         }
     }
 
+    fn update_index_file(&self) -> Result<(), Error> {
+        let index_file_path = format!("{}/index.ts", &self.path);
+        let name = &self.name;
+
+        let postfix = match self.template_type {
+            TemplateType::Component => "",
+            TemplateType::Entity => ".entity",
+            TemplateType::Model => ".model",
+            TemplateType::GetUseCase => "",
+            TemplateType::MutationUseCase => "",
+            TemplateType::Unknown => "",
+        };
+
+        if Path::exists(Path::new(&index_file_path)) {
+            let export_line = format!("export * from \"./{name}{postfix}\";\n");
+
+            let mut file = OpenOptions::new()
+                .write(true)
+                .append(true)
+                .open(&index_file_path)?;
+            write!(file, "{export_line}")?;
+        }
+
+        Ok(())
+    }
 
     fn create_mutation_use_case_index_file(&self) -> Result<(), Error> {
         let template = include_str!("./templates/mutation-use-case/index_template.ts")
@@ -211,32 +236,6 @@ impl TemplateBuilder {
 
         let mut file = File::create(format!("{}/{}/{}.stories.tsx", &self.path, &self.name, &self.name))?;
         write!(file, "{template}")?;
-
-        Ok(())
-    }
-
-    fn update_index_file(&self) -> Result<(), Error> {
-        let index_file_path = format!("{}/index.ts", &self.path);
-        let name = &self.name;
-
-        let postfix = match self.template_type {
-            TemplateType::Component => "",
-            TemplateType::Entity => ".entity",
-            TemplateType::Model => ".model",
-            TemplateType::GetUseCase => "",
-            TemplateType::MutationUseCase => "",
-            TemplateType::Unknown => "",
-        };
-
-        if Path::exists(Path::new(&index_file_path)) {
-            let export_line = format!("export * from \"./{name}{postfix}\";\n");
-
-            let mut file = OpenOptions::new()
-                .write(true)
-                .append(true)
-                .open(&index_file_path)?;
-            write!(file, "{export_line}")?;
-        }
 
         Ok(())
     }
