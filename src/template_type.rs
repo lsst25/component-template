@@ -1,4 +1,4 @@
-use std::fs::{self, File};
+use std::fs::{self, File, OpenOptions};
 use std::io::{ Error, prelude::* };
 use std::path::Path;
 use crate::utils::to_pascal_case;
@@ -42,6 +42,8 @@ impl TemplateBuilder {
                 self.create_component_file()?;
                 self.create_stories_file()?;
 
+                self.update_index_file()?;
+
                 println!("Component {pascal_name} created.");
                 Ok(())
             },
@@ -53,6 +55,7 @@ impl TemplateBuilder {
                 }
 
                 self.create_entity_file()?;
+                self.update_index_file()?;
 
                 println!("Entity {pascal_name} created.");
                 Ok(())
@@ -208,6 +211,32 @@ impl TemplateBuilder {
 
         let mut file = File::create(format!("{}/{}/{}.stories.tsx", &self.path, &self.name, &self.name))?;
         write!(file, "{template}")?;
+
+        Ok(())
+    }
+
+    fn update_index_file(&self) -> Result<(), Error> {
+        let index_file_path = format!("{}/index.ts", &self.path);
+        let name = &self.name;
+
+        let postfix = match self.template_type {
+            TemplateType::Component => "",
+            TemplateType::Entity => ".entity",
+            TemplateType::Model => ".model",
+            TemplateType::GetUseCase => "",
+            TemplateType::MutationUseCase => "",
+            TemplateType::Unknown => "",
+        };
+
+        if Path::exists(Path::new(&index_file_path)) {
+            let export_line = format!("export * from \"./{name}{postfix}\";\n");
+
+            let mut file = OpenOptions::new()
+                .write(true)
+                .append(true)
+                .open(&index_file_path)?;
+            write!(file, "{export_line}")?;
+        }
 
         Ok(())
     }
