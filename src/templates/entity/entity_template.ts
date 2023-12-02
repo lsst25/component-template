@@ -2,7 +2,7 @@ import * as z from "zod";
 
 import { Entity } from "features/nmp-core";
 
-import { $pascal_name$EntityIdId } from "../../vos";
+import type { $pascal_name$EntityId } from "../vos";
 
 const propsSchema = z.object({
   name: z.string(),
@@ -10,8 +10,8 @@ const propsSchema = z.object({
 
 export type $pascal_name$EntityProps = z.infer<typeof propsSchema>;
 
-export class $pascal_name$Entity extends Entity<$pascal_name$EntityProps, $pascal_name$EntityIdId> {
-  static create(props: $pascal_name$EntityProps, id: $pascal_name$EntityIdId): $pascal_name$Entity {
+export class $pascal_name$Entity extends Entity<$pascal_name$EntityProps, $pascal_name$EntityId> {
+  static create(props: $pascal_name$EntityProps, id: $pascal_name$EntityId): $pascal_name$Entity {
     this.validate(props);
 
     return new $pascal_name$Entity(props, id);
