@@ -48,6 +48,24 @@ impl TemplateBuilder {
                 Ok(())
             },
 
+            TemplateType::Identifier => {
+                if Path::exists(Path::new(format!("{path}/{name}.ts").as_str())) {
+                    println!("Identifier {pascal_name} already exists.");
+                    return Ok(());
+                }
+
+                let template = include_str!("./templates/identifier/identifier_template.ts")
+                    .replace("$pascal_name$", &self.pascal_name);
+
+                let mut file = File::create(format!("{}/{}.ts", &self.path, &self.name))?;
+                write!(file, "{template}")?;
+
+                self.update_index_file()?;
+
+                println!("Identifier {pascal_name} created.");
+                Ok(())
+            },
+
             TemplateType::Entity => {
                 if Path::exists(Path::new(format!("{path}/{name}.entity.ts").as_str())) {
                     println!("Entity {pascal_name} already exists.");
@@ -115,6 +133,7 @@ impl TemplateBuilder {
 
         let postfix = match self.template_type {
             TemplateType::Component => "",
+            TemplateType::Identifier => "",
             TemplateType::Entity => ".entity",
             TemplateType::Model => ".model",
             TemplateType::GetUseCase => "",
@@ -244,6 +263,7 @@ impl TemplateBuilder {
 
 enum TemplateType {
     Component,
+    Identifier,
     Entity,
     Model,
     GetUseCase,
@@ -255,6 +275,7 @@ impl From<&str> for TemplateType {
     fn from(item: &str) -> Self {
         match item {
             "component" | "c" => TemplateType::Component,
+            "identifier" | "i" => TemplateType::Identifier,
             "entity" | "e" => TemplateType::Entity,
             "model" | "m" => TemplateType::Model,
             "get-use-case" | "g" => TemplateType::GetUseCase,
@@ -268,6 +289,7 @@ impl TemplateType {
     fn get_path(&self) -> &str {
         match self {
             TemplateType::Component => if self.home_dir().exists() { "./ui" } else { "." },
+            TemplateType::Identifier => if self.home_dir().exists() { "./vos" } else { "." },
             TemplateType::Entity => if self.home_dir().exists() { "./entities" } else { "." },
             TemplateType::Model => if self.home_dir().exists() { "./models" } else { "." },
             TemplateType::GetUseCase => if self.home_dir().exists() { "./use-cases" } else { "." },
@@ -279,6 +301,7 @@ impl TemplateType {
     fn home_dir(&self) -> &Path {
         match self {
             TemplateType::Component => Path::new("./ui"),
+            TemplateType::Identifier => Path::new("./vos"),
             TemplateType::Entity => Path::new("./entities"),
             TemplateType::Model => Path::new("./models"),
             TemplateType::GetUseCase => Path::new("./use-cases"),
